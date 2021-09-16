@@ -5,27 +5,37 @@ from tkinter.ttk import *
 from time import strftime
 
 root = Tk()
-root.title("PDT to JST Clock") #Set the title of the window to PDT to JST Clock
+root.title("JST Clock") #Set the title of the window to JST Clock
 
-#timezone = strftime("%z")
-#print(timezone)
+#Get the UTC offset of the local time and split it into a list to separate the hour difference
+timeUTC = strftime("%z")
+timeUTC = list(timeUTC)
 
-currentHour = int(strftime("%H")) + 16 #Takes PDT time and converts to JST
+#Get the hour difference from the UTC offset
+if len(timeUTC) > 4:
+    timeUTCHour = timeUTC[1] + timeUTC[2]
+else:
+    timeUTCHour = timeUTC[0] + timeUTC[1]
+
+currentHour = int(strftime("%H")) + int(timeUTCHour) #Converts local time to UTC time
+
+jstTime = currentHour + 9 #Convert UTC time to JST time
 p = " AM"
 
 #Makes the time within 24 hours
-if currentHour > 24:
-    currentHour = currentHour - 24
+if jstTime > 24:
+    jstTime = jstTime - 24
+print(jstTime)
 
 #Changes AM to PM if the hour is greater than 12
-if currentHour > 12:
+if jstTime >= 12:
     p = " PM"
-    currentHour = currentHour - 12
+    jstTime = jstTime - 12
 
 #Formats the way the time is displayed
 def time():
-    jstTime = str(currentHour) + ":" + strftime("%M:%S") + p
-    timeLabel.config(text = jstTime)
+    finalTime = str(jstTime) + ":" + strftime("%M:%S") + p
+    timeLabel.config(text = finalTime)
     timeLabel.after(1000, time)
 
 #Styles the text and the colors
